@@ -17,6 +17,16 @@
         "title": "Format current document with Prettier"
       }
     ],
+    "configuration": {
+      "title": "CRT",
+      "properties": {
+        "CRT.formatOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Format on save"
+        }
+      }
+    },
     "snippets": [
       {
         "path": "src/snippets.code-snippets"

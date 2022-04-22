@@ -33,7 +33,10 @@ function activate(context) {
 
   context.subscriptions.push(
     vscode.workspace.onWillSaveTextDocument((saveEvent) => {
-      saveEvent.waitUntil(formatTextDocument(true));
+      let crtSettings = vscode.workspace.getConfiguration("CRT");
+      if (crtSettings.formatOnSave) {
+        saveEvent.waitUntil(formatTextDocument(true));
+      }
     })
   );
 }
