@@ -11,11 +11,9 @@ module.exports = {
 
 // This method is called when your extension is activated
 function activate(context) {
-  const commandID = "cvs.formatDocument";
-
-  let disposable = vscode.commands.registerCommand(commandID, formatter);
-
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(
+    vscode.commands.registerCommand("cvs.formatDocument", formatter)
+  );
 }
 
 function formatter() {

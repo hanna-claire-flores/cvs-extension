@@ -1,14 +1,15 @@
 {
   "name": "cvs-extension",
   "version": "1.0.0",
-  "main": "extension.js",
+  "main": "src/extension.js",
   "publisher": "Hanna",
   "engines": {
     "vscode": "^1.22.0"
   },
   "activationEvents": [
     "onStartupFinished",
-    "onCommand:cvs.formatDocument"
+    "onCommand:cvs.formatDocument",
+    "onView:crt-snippets"
   ],
   "contributes": {
     "commands": [
@@ -17,29 +18,33 @@
         "title": "Format current document with Prettier"
       }
     ],
-    "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "crt-dev-tools",
+          "id": "crt-container",
           "title": "CRT Dev Tools",
-          "icon": "resources/package-explorer.svg"
+          "icon": "resources/heart.svg"
         }
       ]
     },
     "views": {
-      "crt-dev-tools": [
+      "crt-container": [
         {
-          "id": "quick-actions",
+          "id": "crt-quick-actions",
           "name": "Quick Actions"
         },
         {
-          "id": "snippets",
+          "id": "crt-snippets",
           "name": "Snippets"
         }
       ]
-    }
-  }
+    },
+    "viewsWelcome": [
+      {
+        "view": "crt-quick-actions",
+        "contents": "[Format current file with Prettier](command:cvs.formatDocument)"
+      }
+    ]
   },
   "dependencies": {
     "prettier": "^2.6.2"
