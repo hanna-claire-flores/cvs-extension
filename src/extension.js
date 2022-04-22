@@ -1,10 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 const vscode = require("vscode");
 const prettier = require("prettier");
-const fs = require("fs");
-const path = require("path");
-
-const html = fs.readFileSync(path.resolve(__dirname, "index.html"), "utf8");
+const CrtWebView = require("./CrtWebView.js");
 const info = prettier.getSupportInfo();
 
 module.exports = {
@@ -15,67 +12,74 @@ module.exports = {
 // This method is called when your extension is activated
 function activate(context) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("cvs.formatDocument", formatter)
+    vscode.commands.registerCommand("cvs.formatDocument", () => {
+      formatTextDocument(false)
+        .then((m) => {
+          console.log("formatted");
+        })
+        .catch((e) => {});
+    })
+  );
+
+  const crtView = new CrtWebView(context);
+
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider("crt-web", crtView)
   );
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider("crt-web", {
-      resolveWebviewView(view, content, token) {
-        view.webview.options = {
-          enableScripts: true,
-          localResourceRoots: [context.extensionUri],
-        };
+    vscode.window.registerWebviewViewProvider("crt-explorer", crtView)
+  );
 
-        view.webview.html = html;
-
-        view.webview.onDidReceiveMessage(
-          (message) => {
-            switch (message.action) {
-              case "format":
-                vscode.commands.executeCommand("cvs.formatDocument");
-                break;
-              case "alert":
-                vscode.window.showInformationMessage(message.text);
-                break;
-              default:
-                break;
-            }
-          },
-          undefined,
-          context.subscriptions
-        );
-      },
+  context.subscriptions.push(
+    vscode.workspace.onWillSaveTextDocument((saveEvent) => {
+      saveEvent.waitUntil(formatTextDocument(true));
     })
   );
 }
 
-function formatter() {
-  const editor = vscode.window.activeTextEditor;
+function formatTextDocument(onSave) {
+  return new Promise((resolve, reject) => {
+    const editor = vscode.window.activeTextEditor;
+    let msg = "";
+    if (editor) {
+      const document = editor.document;
+      const fullText = document.getText();
 
-  if (editor) {
-    const document = editor.document;
+      const parser = getParser(document.languageId);
 
-    const fullText = document.getText();
-    const fullRange = new vscode.Range(
-      document.positionAt(0),
-      document.positionAt(fullText.length - 1)
-    );
+      if (parser) {
+        try {
+          const formattedText = prettier.format(fullText, { parser: parser });
+          const fullRange = new vscode.Range(
+            document.positionAt(0),
+            document.positionAt(fullText.length)
+          );
 
-    const parser = getParser(document.languageId);
-
-    if (parser) {
-      const formattedText = prettier.format(fullText, { parser: parser });
-
-      editor.edit((editBuilder) => {
-        editBuilder.replace(fullRange, formattedText);
-      });
+          if (onSave) {
+            resolve([new vscode.TextEdit(fullRange, formattedText)]);
+          } else {
+            editor.edit((editBuilder) => {
+              editBuilder.replace(fullRange, formattedText);
+            });
+            resolve("done");
+          }
+        } catch (error) {
+          msg = "Prettier couldnt format: " + error.message;
+          vscode.window.showErrorMessage(msg);
+          reject(msg);
+        }
+      } else {
+        msg = "Prettier doesnt have a parser for this language";
+        vscode.window.showErrorMessage(msg);
+        reject(msg);
+      }
     } else {
-      vscode.window.showErrorMessage(
-        "Prettier doesn't have a parser for this language! VSCode Language ID: " +
-          document.languageId
-      );
+      msg = "No editor open";
+      vscode.window.showErrorMessage(msg);
+      reject(msg);
     }
-  }
+  });
 }
 
 function getParser(langID) {

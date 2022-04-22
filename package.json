@@ -17,6 +17,11 @@
         "title": "Format current document with Prettier"
       }
     ],
+    "snippets": [
+      {
+        "path": "src/snippets.code-snippets"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -30,6 +35,13 @@
       "crt-container": [
         {
           "id": "crt-web",
+          "name": "CRT Dev Tools",
+          "type": "webview"
+        }
+      ],
+      "explorer": [
+        {
+          "id": "crt-explorer",
           "name": "CRT Dev Tools",
           "type": "webview"
         }
