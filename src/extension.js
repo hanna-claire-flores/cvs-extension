@@ -1,8 +1,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 const vscode = require("vscode");
 const prettier = require("prettier");
-const QuickActionsProvider = require("./quickActionsProvider.js");
+const fs = require("fs");
+const path = require("path");
 
+const html = fs.readFileSync(path.resolve(__dirname, "index.html"), "utf8");
 const info = prettier.getSupportInfo();
 
 module.exports = {
@@ -17,8 +19,32 @@ function activate(context) {
   );
 
   context.subscriptions.push(
-    vscode.window.createTreeView("crt-quick-actions", {
-      treeDataProvider: new QuickActionsProvider(),
+    vscode.window.registerWebviewViewProvider("crt-web", {
+      resolveWebviewView(view, content, token) {
+        view.webview.options = {
+          enableScripts: true,
+          localResourceRoots: [context.extensionUri],
+        };
+
+        view.webview.html = html;
+
+        view.webview.onDidReceiveMessage(
+          (message) => {
+            switch (message.action) {
+              case "format":
+                vscode.commands.executeCommand("cvs.formatDocument");
+                break;
+              case "alert":
+                vscode.window.showInformationMessage(message.text);
+                break;
+              default:
+                break;
+            }
+          },
+          undefined,
+          context.subscriptions
+        );
+      },
     })
   );
 }

@@ -29,21 +29,12 @@
     "views": {
       "crt-container": [
         {
-          "id": "crt-quick-actions",
-          "name": "Quick Actions"
-        },
-        {
-          "id": "crt-snippets",
-          "name": "Snippets"
+          "id": "crt-web",
+          "name": "CRT Dev Tools",
+          "type": "webview"
         }
       ]
-    },
-    "viewsWelcome": [
-      {
-        "view": "crt-snippets",
-        "contents": "[Format current file with Prettier](command:cvs.formatDocument)"
-      }
-    ]
+    }
   },
   "dependencies": {
     "prettier": "^2.6.2"
