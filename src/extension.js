@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 const vscode = require("vscode");
 const prettier = require("prettier");
+const QuickActionsProvider = require("./quickActionsProvider.js");
 
 const info = prettier.getSupportInfo();
 
@@ -13,6 +14,12 @@ module.exports = {
 function activate(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand("cvs.formatDocument", formatter)
+  );
+
+  context.subscriptions.push(
+    vscode.window.createTreeView("crt-quick-actions", {
+      treeDataProvider: new QuickActionsProvider(),
+    })
   );
 }
 

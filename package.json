@@ -8,8 +8,7 @@
   },
   "activationEvents": [
     "onStartupFinished",
-    "onCommand:cvs.formatDocument",
-    "onView:crt-snippets"
+    "onCommand:cvs.formatDocument"
   ],
   "contributes": {
     "commands": [
@@ -41,7 +40,7 @@
     },
     "viewsWelcome": [
       {
-        "view": "crt-quick-actions",
+        "view": "crt-snippets",
         "contents": "[Format current file with Prettier](command:cvs.formatDocument)"
       }
     ]
