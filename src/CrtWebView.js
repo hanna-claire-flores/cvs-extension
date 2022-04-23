@@ -26,7 +26,7 @@ class CrtWebView {
       (message) => {
         switch (message.action) {
           case "format":
-            vscode.commands.executeCommand("cvs.formatDocument");
+            vscode.commands.executeCommand("crt.formatDocument");
             break;
           case "alert":
             vscode.window.showInformationMessage(message.text);

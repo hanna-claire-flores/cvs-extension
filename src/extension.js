@@ -3,6 +3,8 @@ const vscode = require("vscode");
 const prettier = require("prettier");
 const CrtWebView = require("./CrtWebView.js");
 const info = prettier.getSupportInfo();
+const SnipsProvider = require("./snipsProvider");
+const ActionsProvider = require("./actionsProvider");
 
 module.exports = {
   activate,
@@ -12,7 +14,7 @@ module.exports = {
 // This method is called when your extension is activated
 function activate(context) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("cvs.formatDocument", () => {
+    vscode.commands.registerCommand("crt.formatDocument", () => {
       formatTextDocument(false)
         .then((m) => {
           console.log("formatted");
@@ -21,14 +23,18 @@ function activate(context) {
     })
   );
 
-  const crtView = new CrtWebView(context);
-
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider("crt-web", crtView)
+    vscode.commands.registerCommand("crt.insertCRTSnippet", function (e) {
+      vscode.commands.executeCommand("editor.action.insertSnippet", {
+        name: e.label,
+      });
+    })
   );
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider("crt-explorer", crtView)
+    vscode.commands.registerCommand("crt.runCRTAction", function (e) {
+      vscode.commands.executeCommand(e.command);
+    })
   );
 
   context.subscriptions.push(
@@ -37,6 +43,18 @@ function activate(context) {
       if (crtSettings.formatOnSave) {
         saveEvent.waitUntil(formatTextDocument(true));
       }
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.window.createTreeView("crt-snips", {
+      treeDataProvider: new SnipsProvider(),
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.window.createTreeView("crt-actions", {
+      treeDataProvider: new ActionsProvider(),
     })
   );
 }

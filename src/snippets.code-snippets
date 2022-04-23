@@ -2,5 +2,9 @@
   "hello": {
     "prefix": "hello",
     "body": "AIUYSGDCIUAYGWDKUYAGFWEDF"
+  },
+  "goodbye": {
+    "prefix": "goodbye",
+    "body": "ajkshgdoiuhdkjvdhflkusdgfjkhdbgvfjuysevbh"
   }
 }
