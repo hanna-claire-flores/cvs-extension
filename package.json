@@ -13,8 +13,18 @@
   "contributes": {
     "commands": [
       {
-        "command": "cvs.formatDocument",
+        "command": "crt.formatDocument",
         "title": "Format current document with Prettier"
+      },
+      {
+        "command": "crt.insertCRTSnippet",
+        "title": "Insert CRT Snippet",
+        "icon": "$(add)"
+      },
+      {
+        "command": "crt.runCRTAction",
+        "title": "Run CRT Action",
+        "icon": "$(play)"
       }
     ],
     "configuration": {
@@ -44,16 +54,26 @@
     "views": {
       "crt-container": [
         {
-          "id": "crt-web",
-          "name": "CRT Dev Tools",
-          "type": "webview"
-        }
-      ],
-      "explorer": [
+          "id": "crt-actions",
+          "name": "CRT Quick-Actions"
+        },
         {
-          "id": "crt-explorer",
-          "name": "CRT Dev Tools",
-          "type": "webview"
+          "id": "crt-snips",
+          "name": "CRT Snips"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "crt.insertCRTSnippet",
+          "group": "inline",
+          "when": "view == crt-snips"
+        },
+        {
+          "command": "crt.runCRTAction",
+          "group": "inline",
+          "when": "view == crt-actions"
         }
       ]
     }
